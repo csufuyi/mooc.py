@@ -86,10 +86,10 @@ def set_draw_color(one_color):
 def draw_handler(canvas):
     #print datetime.datetime.now().time()
     global is_back
+    global draw_obj_list
+    obj_list_len = len(draw_obj_list)
     if is_back:
-        global draw_obj_list
         global count
-        obj_list_len = len(draw_obj_list)
         for index in range(obj_list_len):
             if index < count:
                 draw_one_obj(canvas, draw_obj_list[index][0], draw_obj_list[index][1], draw_obj_list[index][2])
@@ -99,8 +99,8 @@ def draw_handler(canvas):
         global obj_type
         global obj_color
         global obj_point
-        if obj_point != (-1,-1):
-            draw_one_obj(canvas, obj_point, obj_type, obj_color)
+        if obj_list_len != 0:
+                draw_one_obj(canvas, draw_obj_list[-1][0], draw_obj_list[-1][1], draw_obj_list[-1][2])
 
 def draw_one_obj(canvas, obj_point, obj_type, obj_color):
     if obj_type == "circle":
