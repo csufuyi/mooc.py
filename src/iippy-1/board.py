@@ -3,16 +3,10 @@
 
 import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
 import math
-import datetime
-
-# Global Variables
-canvas_width = 800
-canvas_height = 600
 
 def draw_again():
     global draw_obj_list
     global obj_type
-    global obj_point
     global obj_color 
 
     global is_back
@@ -22,7 +16,6 @@ def draw_again():
 
     draw_obj_list = []
     obj_type = "circle"
-    obj_point = (-1,-1)
     obj_color = "red"
 
     is_back = False
@@ -32,21 +25,19 @@ def draw_again():
     
 # 带倍率调节的定时器响应         
 def tick():
-    print datetime.datetime.now().time()
     global base_count
     global count
+    global multiply
     base_count += 1
-    if base_count == multiply:
-        base_count = 0
+    if base_count % multiply == 0:
         count += 1
-        #print datetime.datetime.now().time()
-        #print count     
+
 # 回放按钮响应    
 def play_back():
     global is_back
+    global count
     is_back = True
     timer.start()
-    global count
     count = 0
 
 # 回放倍率设置
@@ -84,71 +75,57 @@ def set_draw_color(one_color):
 
 # 画图和重放功能
 def draw_handler(canvas):
-    #print datetime.datetime.now().time()
     global is_back
     global draw_obj_list
+    global count
     obj_list_len = len(draw_obj_list)
     if is_back:
-        global count
         for index in range(obj_list_len):
             if index < count:
                 draw_one_obj(canvas, draw_obj_list[index][0], draw_obj_list[index][1], draw_obj_list[index][2])
         if count > obj_list_len:
             timer.stop()
     else:
-        global obj_type
-        global obj_color
-        global obj_point
+        #画最近添加的点
         if obj_list_len != 0:
                 draw_one_obj(canvas, draw_obj_list[-1][0], draw_obj_list[-1][1], draw_obj_list[-1][2])
 
-def draw_one_obj(canvas, obj_point, obj_type, obj_color):
-    if obj_type == "circle":
-        canvas.draw_circle(obj_point, 50, 5, obj_color)
-    elif obj_type == "square":
-        # Top left corner = (a, b)
-        a = obj_point[0]
-        b = obj_point[1]
+def draw_one_obj(canvas, point, draw_type, color):
+    if draw_type == "circle":
+        canvas.draw_circle(point, 50, 5, color)
+    elif draw_type == "square":
+        a = point[0]
+        b = point[1]
         width = 40 # For squares, width = height
         height = 40
-        canvas.draw_polygon([(a, b), (a, b + height), (a + width, b + height), (a + width, b)], 2, obj_color)
-    elif obj_type == "triangles":
+        canvas.draw_polygon([(a, b), (a, b + height), (a + width, b + height), (a + width, b)], 2, color)
+    elif draw_type == "triangles":
         # Formula for equilateral triangles:
-        a = obj_point[0]
-        b = obj_point[1]
+        a = point[0]
+        b = point[1]
         width = 100
         canvas.draw_polygon([(a, b), (a + width, b), ((2 * a + width) / 2, b + width / 2 / math.tan(math.pi / 6))],
-                            5, "Black", obj_color)
-    else:
-        print "to finish"
+                            5, "Black", color)
 
 # 记录鼠标点击过的形状列表
-def mouse_handler(points):
-# where back draw, do not process mouse event
+def mouse_handler(point):
     global is_back
-    if ~is_back:
-        global draw_obj_list
-        global obj_type
-        global obj_color
-        global obj_point
-        draw_obj_list.append((points, obj_type, obj_color))
-        obj_point = points
+    global draw_obj_list
+    global obj_type
+    global obj_color
+    if not is_back:
+        draw_obj_list.append((point, obj_type, obj_color))
 
-# begin
-frame = simplegui.create_frame('Painter by free', canvas_width, canvas_height)
-
+frame = simplegui.create_frame('Painter by free', 800, 600)
+button_again = frame.add_button('Again', draw_again,200)
 button_circle = frame.add_button('circle', set_draw_circle, 50)
 button_square = frame.add_button('square', set_draw_square, 50)
 button_rectangle = frame.add_button('triangles', set_draw_triangles, 50)
-
 button_red = frame.add_button('Red', set_draw_red, 100)
 button_green = frame.add_button('Green', set_draw_green, 100)
 button_blue = frame.add_button('Blue', set_draw_blue, 100)
-
 button_back = frame.add_button('Play Back', play_back, 200)
-button_again = frame.add_button('Draw Again', draw_again,200)
-inp = frame.add_input('Input Multiply', change_multiply, 50)    
-
+inp = frame.add_input('Multiply', change_multiply, 50)    
 frame.set_mouseclick_handler(mouse_handler)
 frame.set_draw_handler(draw_handler)
 timer = simplegui.create_timer(100, tick)
