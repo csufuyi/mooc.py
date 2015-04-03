@@ -3,6 +3,7 @@
 
 import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
 import math
+import datetime
 
 # Global Variables
 canvas_width = 800
@@ -31,13 +32,15 @@ def draw_again():
     
 # 带倍率调节的定时器响应         
 def tick():
+    print datetime.datetime.now().time()
     global base_count
     global count
     base_count += 1
     if base_count == multiply:
         base_count = 0
         count += 1
-        
+        #print datetime.datetime.now().time()
+        #print count     
 # 回放按钮响应    
 def play_back():
     global is_back
@@ -81,6 +84,7 @@ def set_draw_color(one_color):
 
 # 画图和重放功能
 def draw_handler(canvas):
+    #print datetime.datetime.now().time()
     global is_back
     if is_back:
         global draw_obj_list
@@ -141,9 +145,9 @@ button_red = frame.add_button('Red', set_draw_red, 100)
 button_green = frame.add_button('Green', set_draw_green, 100)
 button_blue = frame.add_button('Blue', set_draw_blue, 100)
 
-button_back = frame.add_button('Back', play_back, 200)
-button_again = frame.add_button('Again', draw_again,200)
-inp = frame.add_input('Input n X', change_multiply, 50)    
+button_back = frame.add_button('Play Back', play_back, 200)
+button_again = frame.add_button('Draw Again', draw_again,200)
+inp = frame.add_input('Input Multiply', change_multiply, 50)    
 
 frame.set_mouseclick_handler(mouse_handler)
 frame.set_draw_handler(draw_handler)
