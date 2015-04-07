@@ -115,7 +115,8 @@ def mouse_handler(point):
     global obj_color
     if not is_back:
         draw_obj_list.append((point, obj_type, obj_color))
-
+        print point
+        
 frame = simplegui.create_frame('Painter by free', 800, 600)
 button_again = frame.add_button('Again', draw_again,200)
 button_circle = frame.add_button('circle', set_draw_circle, 50)
