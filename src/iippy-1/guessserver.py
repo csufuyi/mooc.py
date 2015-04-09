@@ -2,39 +2,49 @@
 
 import random
 import time
+import os
 
 from multiprocessing.connection import Listener
-from array import array
+from multiprocessing import Process
 
 class GuessServer:
     def __init__(self, id):
         self.id = id
         
-    def send(self, req):
+    def send(self, conn, req):
         conn.send(req)
 
-    def recv(self, res):
-        self.send (res)
+    def recv(self, conn, res):
+        self.send (conn, res)
+
 
 # game logic
-server = GuessServer(1);
+def run_proc(conn, id):
+    while True:
+        print time.ctime()
+        time.sleep(1)
+        server = GuessServer(id);
+        res =  conn.recv()
+        server.recv(conn, res)
+    conn.close()
+
+
+print 'Parent process %s.' % os.getpid()
 address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
 listener = Listener(address, authkey='secret password')
-conn = listener.accept()
-print 'connection accepted from', listener.last_accepted
-
+id = 0
 
 while True:
-    print "server is working"
-    print time.ctime()
-    time.sleep(1)
+    conn = listener.accept()
+    print 'connection accepted from', listener.last_accepted
+    p = Process(target=run_proc, args=(conn, id,))
 
-    res =  conn.recv()
-    server.recv(res)
+    print 'Process will start.' + str(id)
+    p.start()
+    p.join()
+    id += 1
 
-
-#conn.send([2.25, None, 'junk', float])
-# conn managerment
-conn.close()
 listener.close()
+print 'Process end.'
+
 
