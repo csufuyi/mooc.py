@@ -54,7 +54,7 @@ ai.send_req('hello ai')
 
 
 while True:
-    print "ai is working"
+    print "ai is working" + str(ai.id)
     print time.ctime()
     time.sleep(1)
     

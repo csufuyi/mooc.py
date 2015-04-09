@@ -1,4 +1,5 @@
-#coding:UTF-8
+# -*- coding: utf-8 -*-
+# draw by free
 
 import random
 import time
@@ -19,16 +20,17 @@ class GuessServer:
 
 
 # game logic
-def run_proc(conn, id):
+def game_proc(conn, id):
     while True:
         print time.ctime()
         time.sleep(1)
         server = GuessServer(id);
+        print server.id
         res =  conn.recv()
         server.recv(conn, res)
     conn.close()
 
-
+# multiprocessing connection managerment
 print 'Parent process %s.' % os.getpid()
 address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
 listener = Listener(address, authkey='secret password')
@@ -37,12 +39,13 @@ id = 0
 while True:
     conn = listener.accept()
     print 'connection accepted from', listener.last_accepted
-    p = Process(target=run_proc, args=(conn, id,))
+
+    id += 1
+    p = Process(target=game_proc, args=(conn, id,))
 
     print 'Process will start.' + str(id)
     p.start()
-    p.join()
-    id += 1
+
 
 listener.close()
 print 'Process end.'
