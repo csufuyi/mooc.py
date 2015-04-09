@@ -10,11 +10,11 @@ class GuessServer:
     def __init__(self, id):
         self.id = id
         
-    def send_req(req):
-        print 'send req to server'
+    def send(self, req):
+        conn.send(req)
 
-    def recv_res(res):
-        print 'recv'
+    def recv(self, res):
+        self.send (res)
 
 # game logic
 server = GuessServer(1);
@@ -28,7 +28,9 @@ while True:
     print "server is working"
     print time.ctime()
     time.sleep(1)
-    print conn.recv()
+
+    res =  conn.recv()
+    server.recv(res)
 
 
 #conn.send([2.25, None, 'junk', float])

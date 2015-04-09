@@ -13,17 +13,17 @@ class GuessClientAI:
     def __init__(self, id):
         self.id = id
         
-    def send_req(req):
-        print 'send req to server'
+    def send_req(self,req):
+        conn.send(req)
 
-    def recv_res(res):
+    def recv_res(self, res):
         print 'recv'
         add_res(res)
         
-    def add_req(req):
+    def add_req(self, req):
         self.req_list.append(req)
 
-    def add_res(res):
+    def add_res(self, res):
         self.res_list.append(res)
 
     def reset():
@@ -43,21 +43,24 @@ class GuessClientAI:
 def range100():
     pass
 
-# game logic
-ai = GuessClientAI(1)
-ai.send_req()
-
 
 # conn managerment
 address = ('localhost', 6000)
 conn = Client(address, authkey='secret password')
 
+# game logic
+ai = GuessClientAI(1)
+ai.send_req('hello ai')
+
+
 while True:
     print "ai is working"
     print time.ctime()
     time.sleep(1)
-    print conn.recv()                 # => [2.25, None, 'junk', float]
-
+    
+    res = conn.recv()
+    print res
+    ai.send_req(res)
 conn.close()
 
 # UI managerment
