@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# draw by free
+# guessgame server
+# by free
 
 import random
 import time

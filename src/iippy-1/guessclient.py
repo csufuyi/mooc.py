@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-# draw by free
+# guess game client
+# by free
 
 #import simplegui
 import random
 import time
-
+import os
 from multiprocessing.connection import Client
-from array import array
 
 
 class GuessClientAI:
-    def __init__(self, id):
+    def __init__(self, id, min, max):
         self.id = id
+        self.min = min
+        self.max = max
         
     def send_req(self,req):
         conn.send(req)
@@ -26,17 +28,17 @@ class GuessClientAI:
     def add_res(self, res):
         self.res_list.append(res)
 
-    def reset():
+    def reset(self):
         self.req_list.clear()
         self.res_list.clear()
         self.min = 0
         self.max = 99
 
-    def set_bound(min, max):
+    def set_bound(self, min, max):
         self.min = min
         self.max = max
 
-    def get_number():
+    def get_random_number(self):
         return  random.randint(self.min, self.max)
  
 
@@ -49,8 +51,9 @@ address = ('localhost', 6000)
 conn = Client(address, authkey='secret password')
 
 # game logic
-ai = GuessClientAI(1)
-ai.send_req('hello ai')
+ai = GuessClientAI(os.getpid(), 0, 99)
+begin_num = ai.get_random_number()
+ai.send_req(begin_num)
 
 
 while True:
