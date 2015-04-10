@@ -31,24 +31,28 @@ def game_proc(conn, id):
         server.recv(conn, res)
     conn.close()
 
-# multiprocessing connection managerment
-print 'Parent process %s.' % os.getpid()
-address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
-listener = Listener(address, authkey='secret password')
-id = 0
 
-while True:
-    conn = listener.accept()
-    print 'connection accepted from', listener.last_accepted
+if __name__ == '__main__':
 
-    id += 1
-    p = Process(target=game_proc, args=(conn, id,))
+    # multiprocessing connection managerment
+    print 'Parent process %s.' % os.getpid()
+    address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
+    listener = Listener(address, authkey='secret password')
+    id = 0
 
-    print 'Process will start.' + str(id)
-    p.start()
+    # one connection with a sub Process
+    while True:
+        conn = listener.accept()
+        print 'connection accepted from', listener.last_accepted
 
+        id += 1
+        p = Process(target=game_proc, args=(conn, id,))
 
-listener.close()
-print 'Process end.'
+        print 'Process will start.' + str(id)
+        p.start()
+
+    # Listener end
+    listener.close()
+    print 'Process end.'
 
 

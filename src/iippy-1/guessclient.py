@@ -21,7 +21,8 @@ class GuessClientAI:
     def recv_res(self, res):
         print 'recv'
         add_res(res)
-        
+
+    '''        
     def add_req(self, req):
         self.req_list.append(req)
 
@@ -32,39 +33,79 @@ class GuessClientAI:
         self.req_list.clear()
         self.res_list.clear()
         self.min = 0
-        self.max = 99
+        self.max = 99 '''
 
-    def set_bound(self, min, max):
+    def set_min(self, min):
         self.min = min
+
+    def set_max(self, max):
         self.max = max
 
+    def set_current_num(self, num):
+        self.curnum = num
+
+    def get_current_num(self):
+        return self.curnum 
+
+    # strategy 1
     def get_random_number(self):
         return  random.randint(self.min, self.max)
- 
 
-def range100():
-    pass
+    # stragegy 2
+    def get_mid_number(self):
+        return  random.randint(self.min, self.max)
 
-
-# conn managerment
-address = ('localhost', 6000)
-conn = Client(address, authkey='secret password')
-
-# game logic
-ai = GuessClientAI(os.getpid(), 0, 99)
-begin_num = ai.get_random_number()
-ai.send_req(begin_num)
-
-
-while True:
-    print "ai is working" + str(ai.id)
-    print time.ctime()
-    time.sleep(1)
+    def send_strategy(self):
+        # change stragegy 1
+        num = self.get_random_number()
+        self.send_req(num)
     
-    res = conn.recv()
-    print res
-    ai.send_req(res)
-conn.close()
+    def process(self, res):
+        if res == 'big':
+            ai.set_max(ai.get_current_num())
+            ai.send_strategy()
+            return True 
+        elif res == 'small':
+            ai.set_min(ai.get_current_num())
+            ai.send_strategy()
+            return True 
+        elif res == 'hit':
+            print 'Good!you got it'
+            return True
+        elif res == 'notimes':
+            print 'Sorry!you have no times'
+            return False 
+        else:
+            print 'check error'
+            return False 
+
+if __name__ == '__main__':
+    # conn managerment
+    address = ('localhost', 6000)
+    conn = Client(address, authkey='secret password')
+
+    # game logic
+    ai = GuessClientAI(os.getpid(), 0, 99)
+
+    # request: ai_number
+    # response: ai_result:big,small,hit,notimes
+    begin_num = ai.get_random_number()
+    ai.set_current_num(begin_num)
+    ai.send_req(begin_num)
+
+    loop = True
+    while loop:
+        print "ai is working " + str(ai.id)
+        print time.ctime()
+        time.sleep(1)
+        res = conn.recv()
+        print res
+        loop = ai.process(res)
+        print loop
+
+    # conn end
+    conn.close()
+    print "ai is done " + str(ai.id)
 
 # UI managerment
 # create frame
