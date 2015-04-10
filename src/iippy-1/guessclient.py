@@ -53,22 +53,23 @@ class GuessClientAI:
 
     # stragegy 2
     def get_mid_number(self):
-        return  random.randint(self.min, self.max)
+        return  (self.min +  self.max) / 2
 
     def send_strategy(self):
-        # change stragegy 1
-        num = self.get_random_number()
+        # change stragegy 
+        # num = self.get_random_number()
+        num = self.get_mid_number()
         print num
         self.set_current_num(num)
         self.send_req(num)
     
     def process(self, res):
         if res == 'big':
-            ai.set_max(ai.get_current_num())
+            ai.set_max(ai.get_current_num()-1)
             ai.send_strategy()
             return True 
         elif res == 'small':
-            ai.set_min(ai.get_current_num())
+            ai.set_min(ai.get_current_num()+1)
             ai.send_strategy()
             return True 
         elif res == 'hit':
@@ -91,7 +92,7 @@ if __name__ == '__main__':
 
     # request: ai_number
     # response: ai_result:big,small,hit,notimes
-    begin_num = ai.get_random_number()
+    begin_num = ai.get_mid_number()
     print begin_num
     ai.set_current_num(begin_num)
     ai.send_req(begin_num)
@@ -102,7 +103,6 @@ if __name__ == '__main__':
         res = conn.recv()
         print res
         loop = ai.process(res)
-        print loop
 
     # conn end
     conn.close()
