@@ -11,28 +11,26 @@ import os
 
 from multiprocessing.connection import Client
 
+# global variable
+count = 0
+req_list = []
+
 class GuessClientAI:
     def __init__(self, id, min, max):
         self.id = id
         self.min = min
         self.max = max
-        self.req_list = []
-        self.res_list = []
         
     def send_req(self,req):
         conn.send(req)
-        self.add_req(req)
+        self.log_req(req)
 
     def recv_res(self, res):
         print 'recv'
-        add_res(res)
-        self.add_res(res)
 
-    def add_req(self, req):
-        self.req_list.append(req)
-
-    def add_res(self, res):
-        self.res_list.append(res)
+    def log_req(self, req):
+        global req_list
+        req_list.append(req)
 
     def set_min(self, min):
         self.min = min
@@ -81,6 +79,20 @@ class GuessClientAI:
             print 'check error'
             return False 
 
+# for redo draw
+def tick():
+    global count
+    count += 1
+
+# 画图和重放功能
+def draw_handler(canvas):
+    canvas.draw_line((0, 0), (0, 99), 10, 'Red') 
+    global req_list
+    req_list_len = len(req_list)
+    for index in range(req_list_len):
+        canvas.draw_polyline([(10, 20), (30, 20), (90, 70)], 10, 'Green') 
+#               draw_one_obj(canvas, draw_obj_list[-1][0], draw_obj_list[-1][1], draw_obj_list[-1][2])
+
 def new_game():
     # game logic
     ai = GuessClientAI(os.getpid(), 0, 99)
@@ -94,7 +106,7 @@ def new_game():
 
     loop = True
     while loop:
-        time.sleep(1)
+        #time.sleep(1)
         res = conn.recv()
         print res
         loop = ai.process(res)
@@ -106,9 +118,10 @@ if __name__ == '__main__':
     conn = Client(address, authkey='secret password')
 
     # UI managerment
-    f = simplegui.create_frame("猜数游戏 AI", 200, 500)
+    f = simplegui.create_frame("猜数游戏 AI", 200, 200)
     f.add_button("new game [0,100)", new_game, 200)
-
+    f.set_draw_handler(draw_handler)
+    timer = simplegui.create_timer(100, tick)
     f.start() 
 
     # conn end
