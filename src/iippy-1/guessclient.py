@@ -1,39 +1,38 @@
 # -*- coding: utf-8 -*-
-# guess game client
+# guess game client ai
 # by free
 
 #import simplegui
+import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
+
 import random
 import time
 import os
-from multiprocessing.connection import Client
 
+from multiprocessing.connection import Client
 
 class GuessClientAI:
     def __init__(self, id, min, max):
         self.id = id
         self.min = min
         self.max = max
+        self.req_list = []
+        self.res_list = []
         
     def send_req(self,req):
         conn.send(req)
+        self.add_req(req)
 
     def recv_res(self, res):
         print 'recv'
         add_res(res)
+        self.add_res(res)
 
-    '''        
     def add_req(self, req):
         self.req_list.append(req)
 
     def add_res(self, res):
         self.res_list.append(res)
-
-    def reset(self):
-        self.req_list.clear()
-        self.res_list.clear()
-        self.min = 0
-        self.max = 99 '''
 
     def set_min(self, min):
         self.min = min
@@ -65,12 +64,12 @@ class GuessClientAI:
     
     def process(self, res):
         if res == 'big':
-            ai.set_max(ai.get_current_num()-1)
-            ai.send_strategy()
+            self.set_max(self.get_current_num()-1)
+            self.send_strategy()
             return True 
         elif res == 'small':
-            ai.set_min(ai.get_current_num()+1)
-            ai.send_strategy()
+            self.set_min(self.get_current_num()+1)
+            self.send_strategy()
             return True 
         elif res == 'hit':
             print 'Good!you got it'
@@ -82,11 +81,7 @@ class GuessClientAI:
             print 'check error'
             return False 
 
-if __name__ == '__main__':
-    # conn managerment
-    address = ('localhost', 6000)
-    conn = Client(address, authkey='secret password')
-
+def new_game():
     # game logic
     ai = GuessClientAI(os.getpid(), 0, 99)
 
@@ -99,23 +94,25 @@ if __name__ == '__main__':
 
     loop = True
     while loop:
-        print "ai is working " + str(ai.id)
+        time.sleep(1)
         res = conn.recv()
         print res
         loop = ai.process(res)
+#        print "ai is working " + str(ai.id)
+
+if __name__ == '__main__':
+    # conn managerment
+    address = ('localhost', 6000)
+    conn = Client(address, authkey='secret password')
+
+    # UI managerment
+    f = simplegui.create_frame("猜数游戏 AI", 200, 500)
+    f.add_button("new game [0,100)", new_game, 200)
+
+    f.start() 
 
     # conn end
     conn.close()
-    print "ai is done " + str(ai.id)
-
-# UI managerment
-# create frame
-#f = simplegui.create_frame("猜数游戏 AI", 200, 500)
-
-# register event handlers for control elements and start frame
-#f.add_button("range [0,100)", range100, 200)
-#f.start() 
-
 
 
 
