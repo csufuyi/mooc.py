@@ -58,6 +58,8 @@ class GuessClientAI:
     def send_strategy(self):
         # change stragegy 1
         num = self.get_random_number()
+        print num
+        self.set_current_num(num)
         self.send_req(num)
     
     def process(self, res):
@@ -71,7 +73,7 @@ class GuessClientAI:
             return True 
         elif res == 'hit':
             print 'Good!you got it'
-            return True
+            return False 
         elif res == 'notimes':
             print 'Sorry!you have no times'
             return False 
@@ -90,14 +92,13 @@ if __name__ == '__main__':
     # request: ai_number
     # response: ai_result:big,small,hit,notimes
     begin_num = ai.get_random_number()
+    print begin_num
     ai.set_current_num(begin_num)
     ai.send_req(begin_num)
 
     loop = True
     while loop:
         print "ai is working " + str(ai.id)
-        print time.ctime()
-        time.sleep(1)
         res = conn.recv()
         print res
         loop = ai.process(res)
