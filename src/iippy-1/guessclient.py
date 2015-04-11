@@ -16,6 +16,9 @@ count = 0
 req_list = []
 ai_type = 0
 
+# postion bigger times
+LINE_TIMES = 5
+
 class GuessClientAI:
     def __init__(self, id, min, max):
         self.id = id
@@ -109,18 +112,23 @@ def play_back():
 
 # 画图和重放功能
 def draw_handler(canvas):
-    canvas.draw_line((0, 0), (0, 99*5), 10, 'Green') 
+    canvas.draw_text(str(0), (10, 20), 20, 'Red')
+    canvas.draw_text(str(99), (5, 97*LINE_TIMES), 20, 'Red')
+    canvas.draw_line((0, 0), (0, 99*LINE_TIMES), 10, 'Green') 
+
     global req_list
-    print req_list
     global count
     req_list_len = len(req_list)
     for index in range(req_list_len):
         #print req_list
         if index < count and index != req_list_len-1:
-            canvas.draw_line((index*50, req_list[index]*5), ((index+1)*50, req_list[index+1]*5), 2, 'Red') 
-            
-#        canvas.draw_polyline([(10, req_obj_list[-1][0],), (30, 20), (90, 70)], 10, 'Green') 
-#               draw_one_obj(canvas, draw_obj_list[-1][0], draw_obj_list[-1][1], draw_obj_list[-1][2])
+            canvas.draw_text(str(req_list[index]), (index*50, req_list[index]*5), 20, 'Red')
+            canvas.draw_line((index*50, req_list[index]*LINE_TIMES),
+                             ((index+1)*50, req_list[index+1]*LINE_TIMES), 2, 'Blue') 
+        if index == req_list_len-1:
+            canvas.draw_text(str(req_list[index]), (index*50, req_list[index]*LINE_TIMES), 20, 'Red')
+            canvas.draw_line((0, req_list[index]*LINE_TIMES),
+                             (index*50, req_list[index]*LINE_TIMES), 2, 'Yellow') 
     if count > req_list_len:
         timer.stop()
  
@@ -163,6 +171,7 @@ if __name__ == '__main__':
     f.start() 
 
     # conn end
+    timer.stop()
     conn.close()
 
 
