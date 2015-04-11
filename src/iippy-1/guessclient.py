@@ -84,19 +84,36 @@ def tick():
     global count
     count += 1
 
+# 回放按钮响应    
+def play_back():
+    global count
+    count = 0
+    timer.start()
+
 # 画图和重放功能
 def draw_handler(canvas):
-    canvas.draw_line((0, 0), (0, 99), 10, 'Red') 
+    canvas.draw_line((0, 0), (0, 99*5), 10, 'Green') 
     global req_list
+    print req_list
+    global count
     req_list_len = len(req_list)
     for index in range(req_list_len):
-        canvas.draw_polyline([(10, 20), (30, 20), (90, 70)], 10, 'Green') 
+        #print req_list
+        if index != req_list_len-1:
+            canvas.draw_line((index*100, req_list[index]*5), ((index+1)*100, req_list[index+1]*5), 2, 'Red') 
+            
+#        canvas.draw_polyline([(10, req_obj_list[-1][0],), (30, 20), (90, 70)], 10, 'Green') 
 #               draw_one_obj(canvas, draw_obj_list[-1][0], draw_obj_list[-1][1], draw_obj_list[-1][2])
-
+    if count > req_list_len:
+        timer.stop()
+ 
 def new_game():
     # game logic
     ai = GuessClientAI(os.getpid(), 0, 99)
 
+    global req_list
+    req_list = []
+    
     # request: ai_number
     # response: ai_result:big,small,hit,notimes
     begin_num = ai.get_mid_number()
@@ -118,7 +135,7 @@ if __name__ == '__main__':
     conn = Client(address, authkey='secret password')
 
     # UI managerment
-    f = simplegui.create_frame("猜数游戏 AI", 200, 200)
+    f = simplegui.create_frame("猜数游戏 AI", 800, 600)
     f.add_button("new game [0,100)", new_game, 200)
     f.set_draw_handler(draw_handler)
     timer = simplegui.create_timer(100, tick)
