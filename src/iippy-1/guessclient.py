@@ -23,7 +23,6 @@ class GuessClientAI:
         
     def send_req(self,req):
         conn.send(req)
-        self.log_req(req)
 
     def recv_res(self, res):
         print 'recv'
@@ -56,12 +55,17 @@ class GuessClientAI:
         # change stragegy 
         # num = self.get_random_number()
         num = self.get_mid_number()
-        print num
+
         self.set_current_num(num)
         self.send_req(num)
-    
+        # log for redraw
+        self.log_req(num)
+        
     def process(self, res):
-        if res == 'big':
+        if res == 'ok':
+            self.send_strategy()
+            return True 
+        elif res == 'big':
             self.set_max(self.get_current_num()-1)
             self.send_strategy()
             return True 
@@ -108,26 +112,24 @@ def draw_handler(canvas):
         timer.stop()
  
 def new_game():
+    # db for req sequence
+    global req_list
+    req_list = []
+
     # game logic
     ai = GuessClientAI(os.getpid(), 0, 99)
 
-    global req_list
-    req_list = []
-    
-    # request: ai_number
-    # response: ai_result:big,small,hit,notimes
-    begin_num = ai.get_mid_number()
-    print begin_num
-    ai.set_current_num(begin_num)
-    ai.send_req(begin_num)
-
+    # request1: begin
+    # response1: ok
+    ai.send_req('begin')
+       
+    # request2: ai_number
+    # response2: ai_result:big,small,hit
     loop = True
     while loop:
-        #time.sleep(1)
         res = conn.recv()
         print res
         loop = ai.process(res)
-#        print "ai is working " + str(ai.id)
 
 if __name__ == '__main__':
     # conn managerment

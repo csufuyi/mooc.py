@@ -12,7 +12,6 @@ from multiprocessing import Process
 class GuessServer:
     def __init__(self, id):
         self.id = id
-        self.secret_num = random.randint(0,99)
 
     def send(self, conn, req):
         conn.send(req)
@@ -21,10 +20,12 @@ class GuessServer:
         self.send (conn, res)
 
     def process(self, conn, res):
-        print self.secret_num
         print res 
         req = 'haha'
-        if res  == self.secret_num:
+        if res == 'begin':
+            req = 'ok'
+            self.secret_num = random.randint(0,99)
+        elif res  == self.secret_num:
             req = 'hit'
         elif res > self.secret_num:
             req = 'big'
