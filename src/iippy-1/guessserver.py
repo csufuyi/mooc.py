@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     # multiprocessing connection managerment
     print 'Parent process %s.' % os.getpid()
-    address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
+    address = ('127.0.0.1', 6000)     # family is deduced to be 'AF_INET'
     listener = Listener(address, authkey='secret password')
     id = 0
 
