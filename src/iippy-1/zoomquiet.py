@@ -102,7 +102,10 @@ def draw_all(canvas):
         elif p[2]=='watercolor':
             for x in range(p[0][0]-p[3], p[0][0]+p[3]):
 		for y in range(p[0][1]-p[3], p[0][1]+p[3]):
-                    canvas.draw_point([x, y], p[1])
+                        #canvas.draw_point([x, y], 'rgba(255,0,0,1)')
+                        canvas.draw_point([x, y], 'hsla(120, 100%, 50%, 0.3)')
+                        #canvas.draw_point([x, y], p[1])
+                        
         else:
             canvas.draw_polygon(p[0] # shape 
                 , p[4] #line
