@@ -17,9 +17,9 @@ HIGH  = 740
 WIDTH = 700
 REPAINT = []
 REVIEW = []
-PEN = {'color':'blue'
+PEN = {'color':'rgba(0,0,255,1)'
     , 'shape':'watercolor'
-    , 'radius':16
+    , 'radius':32
     , 'line':2
     }
 LIMIT = 1024
@@ -88,6 +88,12 @@ def click_point(position):
     #else:
     #    lab_shape.set_text('ALERT OVER 1024 point...')
 
+    #for x in range(p[0][0]-p[3], p[0][0]+p[3]):
+		#for y in range(p[0][1]-p[3], p[0][1]+p[3]):
+                        #canvas.draw_point([x, y], 'rgba(255,0,0,1)')
+                        #canvas.draw_point([x, y], 'hsla(120, 100%, 50%, 0.3)')
+                        #canvas.draw_point([x, y], p[1])
+       
 def draw_all(canvas):
     #global REPAINT
     #print REPAINT 
@@ -100,12 +106,16 @@ def draw_all(canvas):
                 , p[1] # color
                 , p[1])
         elif p[2]=='watercolor':
-            for x in range(p[0][0]-p[3], p[0][0]+p[3]):
-		for y in range(p[0][1]-p[3], p[0][1]+p[3]):
-                        #canvas.draw_point([x, y], 'rgba(255,0,0,1)')
-                        canvas.draw_point([x, y], 'hsla(120, 100%, 50%, 0.3)')
-                        #canvas.draw_point([x, y], p[1])
-                        
+            a = 0.2
+            for r in range(0, p[3])[::-1]:
+                if r % 4  == 0 and r > 0:
+                    # change the a value in rgba
+                    astr = ',' + str(a) + ')'
+                    p[1] = p[1].replace(',1)', astr)
+                    a += 0.1
+                    a = min (a, 1)
+                    
+                    canvas.draw_circle(p[0], r, 1, p[1], p[1])
         else:
             canvas.draw_polygon(p[0] # shape 
                 , p[4] #line
@@ -141,22 +151,22 @@ btn_triangle = frame.add_button("/\\", hdl_triangle, 29)
 btn_watercolor = frame.add_button("~", hdl_watercolor, 30)
 
 def hdl_red():
-    PEN['color'] = 'red'
+    PEN['color'] = 'rgba(255,0,0,1)'
     tag_color_now('red')
 def hdl_blue():
-    PEN['color'] = 'blue'
+    PEN['color'] = 'rgba(0,0,255,1)'
     tag_color_now('blue')
 def hdl_green():
-    PEN['color'] = 'green'
+    PEN['color'] = 'rgba(0,255,0,1)'
     tag_color_now('green')
 def hdl_black():
-    PEN['color'] = 'black'
+    PEN['color'] = 'rgba(0,0,0,1)'
     tag_color_now('black')
 def hdl_silver():
-    PEN['color'] = 'silver'
+    PEN['color'] = 'rgba(192,192,192,1)'
     tag_color_now('Silver')
 def hdl_white():
-    PEN['color'] = 'white'
+    PEN['color'] = 'rgba(255,255,255,1)'
     tag_color_now('white')
 def tag_color_now(tag):
     lab_color.set_text("now Color: %s"% tag)
@@ -180,27 +190,27 @@ inp_color.set_text('Purple')
 frame.add_label('need enter for work...')
 
 def hdl_S():
-    PEN['radius'] = 2
+    PEN['radius'] = 4
     PEN['line'] = 1
     tag_size_now('S')
 def hdl_M():
-    PEN['radius'] = 4
+    PEN['radius'] = 8
     PEN['line'] = 1
     tag_size_now('M')
 def hdl_L():
-    PEN['radius'] = 6
+    PEN['radius'] = 12
     PEN['line'] = 1
     tag_size_now('L')
 def hdl_XL():
-    PEN['radius'] = 8
+    PEN['radius'] = 16
     PEN['line'] = 1
     tag_size_now('XL')
 def hdl_XXL():
-    PEN['radius'] = 12
+    PEN['radius'] = 24
     PEN['line'] = 2
     tag_size_now('XXL')
 def hdl_XXXL():
-    PEN['radius'] = 16
+    PEN['radius'] = 32
     PEN['line'] = 3
     tag_size_now('XXXL')
 def tag_size_now(tag):
