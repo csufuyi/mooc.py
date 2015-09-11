@@ -108,7 +108,7 @@ def draw_all(canvas):
         elif p[2]=='watercolor':
             a = 0.2
             for r in range(0, p[3])[::-1]:
-                if r % 4  == 0 and r > 0:
+                if  r%4 == 0 and r > 0:
                     # change the a value in rgba
                     astr = ',' + str(a) + ')'
                     p[1] = p[1].replace(',1)', astr)
